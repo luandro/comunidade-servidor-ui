@@ -6,9 +6,12 @@ const Home = ({ containers }) => (
   <Layout>
     <h1>Servidor da Comunidade</h1>
     {console.log(containers)}
-    {containers && containers.map(c => <div key={c.Id}>
-      <h3>{c.Image} - {c.State} {c.Status}</h3>
-    </div>)}
+    {containers 
+      ? containers.map(c => <div key={c.Id}>
+        <h3>{c.Image} - {c.State} {c.Status}</h3>
+      </div>)
+      : <h3>Sem containers...</h3>
+    }
     <style jsx>{`
       li {
         margin-bottom: 0.5rem;
@@ -18,28 +21,28 @@ const Home = ({ containers }) => (
 )
 
 Home.getInitialProps = async ctx => {
-  const apiUrl = process.browser
-    ? `http://${window.location.hostname}:6661/containers/list`
-    : `http://${ctx.req.headers.hostname}:6661/containers/list`
-
+  const host = process.browser
+    ? window.location.hostname
+    : ctx.req.headers.host.split(':')[0]
+  const apiUrl = `http://${host}:6661/containers/list`
+  
   try {
     const response = await fetch(apiUrl)
-    if (response.ok) {
+    if (response) {
       const res = await response.json()
       return {
-        containers: res
+        containers: res,
       }
     } else {
       // https://github.com/developit/unfetch#caveats
       return {
-        success: false
+        containers: null
       }
     }
   } catch (error) {
     // Implementation or Network error
     return {
-      success: false,
-      gotCaught: error,
+      containers: null
     }
   }
 }
