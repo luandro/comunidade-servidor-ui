@@ -18,10 +18,9 @@ const Home = ({ containers }) => (
 )
 
 Home.getInitialProps = async ctx => {
-  const apiUrl = `http://localhost:6661/containers/list`
-  // const apiUrl = process.browser
-  //   ? `${protocol}://${window.location.host}/api/profile.js`
-  //   : `${protocol}://${ctx.req.headers.host}/api/profile.js`
+  const apiUrl = process.browser
+    ? `${protocol}://${window.location.host}:6661/containers/list`
+    : `${protocol}://${ctx.req.headers.host}:6661/containers/list`
 
   try {
     const response = await fetch(apiUrl)
